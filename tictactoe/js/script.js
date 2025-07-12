@@ -17,6 +17,7 @@ let board;          // Array to track the game board state ('' for empty, 'X' or
 let currentPlayer;  // Tracks whose turn it is ('X' or 'O')
 let gameActive;     // Boolean to track if the game is still ongoing
 let mode;           // Game mode: '1p' for 1 player (vs computer), '2p' for 2 players
+let isAiThinking;   // Boolean to prevent player moves while AI is thinking
 
 /**
  * Initializes the game board to starting state
@@ -29,6 +30,8 @@ function initBoard() {
     currentPlayer = 'X';
     // Set game to active
     gameActive = true;
+    // AI is not thinking at start
+    isAiThinking = false;
     // Draw the board on screen
     renderBoard();
     // Update status message
@@ -68,8 +71,11 @@ function renderBoard() {
  */
 
 function handleCellClick(idx) {
-    // Ignore clicks if game is over or cell is already filled
-    if (!gameActive || board[idx]) return;
+    // Ignore clicks if game is over, cell is already filled, or AI is thinking
+    if (!gameActive || board[idx] || isAiThinking) return;
+
+    // In 1-player mode, only allow clicks when it's the human player's turn
+    if (mode === '1p' && currentPlayer === 'O') return;
 
     // Make the player's move
     makeMove(idx, currentPlayer);
@@ -91,7 +97,8 @@ function handleCellClick(idx) {
     if (mode === '1p' && currentPlayer === 'X') {
         // In 1-player mode after player's move, it's computer's turn
         currentPlayer = 'O';
-        statusElement.textContent = `Player O's turn`;
+        isAiThinking = true; // Prevent further clicks
+        statusElement.textContent = `Computer is thinking...`;
         // Delay computer move to make it feel more natural
         setTimeout(aiMove, 700);
     } else {
@@ -113,58 +120,32 @@ function makeMove(idx, player) {
 }
 
 /**
- * Computer makes a move
- * Implements strategy with the following priorities:
- * 1. Win if possible
- * 2. Block player from winning
- * 3. Take center
- * 4. Take corners
- * 5. Take edges
+ * Computer makes a move using the Minimax algorithm
+ * This makes the AI unbeatable by exploring all possible game outcomes
  */
-
 function aiMove() {
     // Don't move if the game is already over
-    if (!gameActive) return;
+    if (!gameActive) {
+        isAiThinking = false;
+        return;
+    }
 
     // Get all empty cells
     const emptyCells = board.map((cell, idx) => cell === '' ? idx : null).filter(idx => idx !== null);
-    if (emptyCells.length === 0) return;
+    if (emptyCells.length === 0) {
+        isAiThinking = false;
+        return;
+    }
 
-    // Strategy 1: Check if computer can win in the next move
-    const winMove = findWinningMove('O');
-    if (winMove !== null) {
-        makeMove(winMove, 'O');
-    }
-    // Strategy 2: Check if player can win in the next move and block it
-    else {
-        const blockMove = findWinningMove('X');
-        if (blockMove !== null) {
-            makeMove(blockMove, 'O');
-        }
-        // Strategy 3: Try to take the center if it's available
-        else if (board[4] === '') {
-            makeMove(4, 'O');
-        }
-        // Strategy 4: Try to take the corners
-        else {
-            const corners = [0, 2, 6, 8].filter(idx => board[idx] === '');
-            if (corners.length > 0) {
-                // Choose a random corner
-                makeMove(corners[Math.floor(Math.random() * corners.length)], 'O');
-            }
-            // Strategy 5: Take any available edge
-            else {
-                const edges = [1, 3, 5, 7].filter(idx => board[idx] === '');
-                // Choose a random edge
-                makeMove(edges[Math.floor(Math.random() * edges.length)], 'O');
-            }
-        }
-    }
+    // Use minimax to find the best move
+    const bestMove = minimax(board, 'O').index;
+    makeMove(bestMove, 'O');
 
     // Check if computer won
     if (checkWin('O')) {
         statusElement.textContent = `Player O wins!`;
         gameActive = false;
+        isAiThinking = false;
         return;
     }
 
@@ -172,12 +153,103 @@ function aiMove() {
     else if (board.every(cell => cell)) {
         statusElement.textContent = "It's a draw!";
         gameActive = false;
+        isAiThinking = false;
         return;
     }
 
     // Return control to the player
     currentPlayer = 'X';
+    isAiThinking = false; // Allow player clicks again
     statusElement.textContent = `Player X's turn`;
+}
+
+/**
+ * Minimax algorithm implementation
+ * Recursively explores all possible game states to find the optimal move
+ * @param {Array} currentBoard - The current state of the board
+ * @param {string} player - The current player ('X' or 'O')
+ * @returns {Object} - Object with 'score' and 'index' properties
+ */
+function minimax(currentBoard, player) {
+    // Get available moves (empty cells)
+    const availableMoves = currentBoard.map((cell, idx) => cell === '' ? idx : null).filter(idx => idx !== null);
+
+    // Base cases - check for terminal states
+    if (checkWinOnBoard(currentBoard, 'X')) {
+        return { score: -10 }; // Player wins (bad for AI)
+    } else if (checkWinOnBoard(currentBoard, 'O')) {
+        return { score: 10 };  // AI wins (good for AI)
+    } else if (availableMoves.length === 0) {
+        return { score: 0 };   // Draw
+    }
+
+    // Store all possible moves and their scores
+    const moves = [];
+
+    // Loop through available moves
+    for (let i = 0; i < availableMoves.length; i++) {
+        const move = {};
+        move.index = availableMoves[i];
+
+        // Make the move on a copy of the board
+        const newBoard = [...currentBoard];
+        newBoard[move.index] = player;
+
+        // Recursively call minimax for the opponent
+        if (player === 'O') {
+            // AI's turn - get score from player's perspective
+            const result = minimax(newBoard, 'X');
+            move.score = result.score;
+        } else {
+            // Player's turn - get score from AI's perspective
+            const result = minimax(newBoard, 'O');
+            move.score = result.score;
+        }
+
+        // Add this move to our moves array
+        moves.push(move);
+    }
+
+    // Choose the best move based on current player
+    let bestMove;
+    if (player === 'O') {
+        // AI wants to maximize score
+        let bestScore = -Infinity;
+        for (let i = 0; i < moves.length; i++) {
+            if (moves[i].score > bestScore) {
+                bestScore = moves[i].score;
+                bestMove = i;
+            }
+        }
+    } else {
+        // Player wants to minimize AI's score
+        let bestScore = Infinity;
+        for (let i = 0; i < moves.length; i++) {
+            if (moves[i].score < bestScore) {
+                bestScore = moves[i].score;
+                bestMove = i;
+            }
+        }
+    }
+
+    // Return the chosen move
+    return moves[bestMove];
+}
+
+/**
+ * Checks if a player has won on a given board state
+ * Similar to checkWin but works on any board array
+ * @param {Array} boardState - The board state to check
+ * @param {string} player - The player symbol to check for ('X' or 'O')
+ * @returns {boolean} - True if the player has won, false otherwise
+ */
+function checkWinOnBoard(boardState, player) {
+    const winPatterns = [
+        [0,1,2],[3,4,5],[6,7,8], // rows
+        [0,3,6],[1,4,7],[2,5,8], // cols
+        [0,4,8],[2,4,6]          // diags
+    ];
+    return winPatterns.some(pattern => pattern.every(idx => boardState[idx] === player));
 }
 
 /**
@@ -196,31 +268,19 @@ function checkWin(player) {
 }
 
 /**
- * Finds a winning move for a player
- * Checks if a player can win in one move by having 2 out of 3 cells in a row
- * @param {string} player - The player symbol to find a winning move for ('X' or 'O')
- * @returns {number|null} - The index of the winning move, or null if no winning move exists
+ * Checks if a player has won on a given board state
+ * Similar to checkWin but works on any board array
+ * @param {Array} boardState - The board state to check
+ * @param {string} player - The player symbol to check for ('X' or 'O')
+ * @returns {boolean} - True if the player has won, false otherwise
  */
-
-function findWinningMove(player) {
+function checkWinOnBoard(boardState, player) {
     const winPatterns = [
         [0,1,2],[3,4,5],[6,7,8], // rows
         [0,3,6],[1,4,7],[2,5,8], // cols
         [0,4,8],[2,4,6]          // diags
     ];
-
-    // Look for a winning pattern where player already has 2 cells and the 3rd is empty
-    for (let pattern of winPatterns) {
-        const playerCells = pattern.filter(idx => board[idx] === player);
-        const emptyCells = pattern.filter(idx => board[idx] === '');
-
-        if (playerCells.length === 2 && emptyCells.length === 1) {
-            // Found a potential winning move
-            return emptyCells[0];
-        }
-    }
-
-    return null; // No winning move found
+    return winPatterns.some(pattern => pattern.every(idx => boardState[idx] === player));
 }
 
 /**
