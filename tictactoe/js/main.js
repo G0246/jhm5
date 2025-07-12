@@ -16,7 +16,7 @@ const twoPlayerBtn = document.getElementById('twoPlayerBtn');
 let board;          // Array to track the game board state ('' for empty, 'X' or 'O' for filled)
 let currentPlayer;  // Tracks whose turn it is ('X' or 'O')
 let gameActive;     // Boolean to track if the game is still ongoing
-let mode;           // Game mode: '1p' for 1 player (vs computer), '2p' for 2 players
+let mode;           // Game mode: '1p' for 1 player, '2p' for 2 players
 let isAiThinking;   // Boolean to prevent player moves while AI is thinking
 
 /**
