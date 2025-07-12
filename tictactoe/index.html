@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
     <!-- Basic meta tags for character set and responsive design -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic Tac Toe</title>
+    <title>井字過三關</title>
     <!-- Link to external stylesheet -->
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -13,7 +13,7 @@
     <div class="container">
         <!-- Title Screen - shown first when game loads (active by default) -->
         <div id="titleScreen" class="screen active">
-            <h1>Tic Tac Toe</h1>
+            <h1>井字過三關</h1>
             <!-- Logo showing a 3x3 grid of X and O symbols -->
             <div class="logo">
                 <div class="logo-grid">
@@ -31,15 +31,15 @@
 
             <!-- Game mode selection buttons -->
             <div class="mode-select">
-                <h2>Select Mode</h2>
-                <button id="onePlayerBtn">1 Player</button>  <!-- Play against AI -->
-                <button id="twoPlayerBtn">2 Players</button> <!-- Play against another person -->
+                <h2>選擇遊戲模式</h2>
+                <button id="onePlayerBtn">單人模式</button>  <!-- Play against AI -->
+                <button id="twoPlayerBtn">雙人模式</button> <!-- Play against another person -->
             </div>
         </div>
 
         <!-- Game Screen - hidden initially, shown after selecting game mode -->
         <div id="gameScreen" class="screen">
-            <h1>Tic Tac Toe</h1>
+            <h1>井字過三關</h1>
 
             <!-- Game board - will be populated by JavaScript with 9 cells -->
             <div id="gameBoard" class="board"></div>
@@ -49,12 +49,12 @@
 
             <!-- Control buttons -->
             <div class="controls">
-                <button id="resetBtn">Restart</button> <!-- Restarts the current game -->
-                <button id="backBtn">Back to Menu</button> <!-- Returns to title screen -->
+                <button id="resetBtn">重新開始</button> <!-- Restarts the current game -->
+                <button id="backBtn">返回目錄</button> <!-- Returns to title screen -->
             </div>
         </div>
     </div>
     <!-- Link to JavaScript file -->
-    <script src="js/script.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

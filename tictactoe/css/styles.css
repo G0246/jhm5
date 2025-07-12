@@ -114,7 +114,7 @@ h2 {
     display: flex;
     justify-content: center;
     align-items: center;
-    cursor: pointer;                        /* Hand cursor on hover */
+    cursor: pointer;                        /* Cursor when hover */
     border: 1px solid #ccc;
 }
 
@@ -125,18 +125,41 @@ h2 {
 
 /* Different colors for X and O */
 .cell[data-player="X"] {
-    color: blue;                            /* X is blue */
+    color: blue;
 }
 
 .cell[data-player="O"] {
-    color: red;                             /* O is red */
+    color: red;
+}
+
+/* Winning cell highlighting */
+.cell.winning-cell {
+    background: #4CAF50 !important;      /* Green background for winning cells */
+    color: white !important;             /* White text for better contrast */
+    animation: pulse 0.8s ease-in-out;     /* Subtle pulse animation */
+}
+
+/* Pulse animation for winning cells */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(76, 175, 80, 0.9);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.7);
+    }
 }
 
 /* Status message area - shows current player, winner, etc. */
 .status {
     margin: 15px 0;
     font-size: 16px;
-    min-height: 20px;                       /* Ensures consistent height even when empty */
+    min-height: 20px;
     color: #333;
 }
 

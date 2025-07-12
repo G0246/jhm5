@@ -35,7 +35,7 @@ function initBoard() {
     // Draw the board on screen
     renderBoard();
     // Update status message
-    statusElement.textContent = `Player ${currentPlayer}'s turn`;
+    statusElement.textContent = `玩家 ${currentPlayer} 的回合`;
 }
 
 /**
@@ -83,14 +83,14 @@ function handleCellClick(idx) {
     // Check if this move resulted in a win
     const winningCells = checkWin(currentPlayer);
     if (winningCells) {
-        statusElement.textContent = `Player ${currentPlayer} wins!`;
+        statusElement.textContent = `玩家 ${currentPlayer} 獲勝！`;
         highlightWinningCells(winningCells);
         gameActive = false;
         return;
     }
     // Check if this move resulted in a draw (all cells filled)
     else if (board.every(cell => cell)) {
-        statusElement.textContent = "It's a draw!";
+        statusElement.textContent = "平手！";
         gameActive = false;
         return;
     }
@@ -100,13 +100,14 @@ function handleCellClick(idx) {
         // In 1-player mode after player's move, it's computer's turn
         currentPlayer = 'O';
         isAiThinking = true; // Prevent further clicks
-        statusElement.textContent = `Computer is thinking...`;
+        statusElement.textContent = `電腦正在思考`;
+
         // Delay computer move to make it feel more natural
         setTimeout(aiMove, 700);
     } else {
         // In 2-player mode, or computer just moved in 1-player mode, switch players
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        statusElement.textContent = `Player ${currentPlayer}'s turn`;
+        statusElement.textContent = `玩家 ${currentPlayer} 的回合`;
     }
 }
 
@@ -146,7 +147,7 @@ function aiMove() {
     // Check if computer won
     const winningCells = checkWin('O');
     if (winningCells) {
-        statusElement.textContent = `Player O wins!`;
+        statusElement.textContent = `玩家 O 獲勝！`;
         highlightWinningCells(winningCells);
         gameActive = false;
         isAiThinking = false;
@@ -155,7 +156,7 @@ function aiMove() {
 
     // Check if the game is a draw
     else if (board.every(cell => cell)) {
-        statusElement.textContent = "It's a draw!";
+        statusElement.textContent = "平手！";
         gameActive = false;
         isAiThinking = false;
         return;
@@ -164,7 +165,7 @@ function aiMove() {
     // Return control to the player
     currentPlayer = 'X';
     isAiThinking = false; // Allow player clicks again
-    statusElement.textContent = `Player X's turn`;
+    statusElement.textContent = `玩家 X 的回合`;
 }
 
 /**
@@ -179,10 +180,10 @@ function minimax(currentBoard, player) {
     const availableMoves = currentBoard.map((cell, idx) => cell === '' ? idx : null).filter(idx => idx !== null);
 
     // Base cases - check for terminal states
-    if (checkWinOnBoard(currentBoard, 'X')) {
-        return { score: -10 }; // Player wins (bad for AI)
-    } else if (checkWinOnBoard(currentBoard, 'O')) {
-        return { score: 10 };  // AI wins (good for AI)
+    if (checkWin(currentBoard, 'X', false)) {
+        return { score: -10 }; // Player wins
+    } else if (checkWin(currentBoard, 'O', false)) {
+        return { score: 10 };  // AI wins
     } else if (availableMoves.length === 0) {
         return { score: 0 };   // Draw
     }
@@ -242,38 +243,31 @@ function minimax(currentBoard, player) {
 
 /**
  * Checks if a player has won on a given board state
- * Similar to checkWin but works on any board array
- * @param {Array} boardState - The board state to check
+ * @param {Array} boardState - The board state to check (use global 'board' for current game)
  * @param {string} player - The player symbol to check for ('X' or 'O')
- * @returns {boolean} - True if the player has won, false otherwise
+ * @param {boolean} returnPattern - If true, returns winning pattern array; if false, returns boolean
+ * @returns {Array|boolean|null} - Winning pattern array, boolean, or null based on returnPattern parameter
  */
-function checkWinOnBoard(boardState, player) {
-    const winPatterns = [
-        [0,1,2],[3,4,5],[6,7,8], // rows
-        [0,3,6],[1,4,7],[2,5,8], // cols
-        [0,4,8],[2,4,6]          // diags
-    ];
-    return winPatterns.some(pattern => pattern.every(idx => boardState[idx] === player));
-}
+function checkWin(boardState, player, returnPattern = true) {
+    // If boardState is a string (legacy call), shift parameters
+    if (typeof boardState === 'string') {
+        returnPattern = player !== undefined ? player : true;
+        player = boardState;
+        boardState = board;
+    }
 
-/**
- * Checks if a player has won the game
- * @param {string} player - The player symbol to check for ('X' or 'O')
- * @returns {Array|null} - Array of winning cell indices, or null if no win
- */
-function checkWin(player) {
     const winPatterns = [
-        [0,1,2],[3,4,5],[6,7,8], // rows
-        [0,3,6],[1,4,7],[2,5,8], // cols
-        [0,4,8],[2,4,6]          // diags
+        [0,1,2],[3,4,5],[6,7,8], // vertical
+        [0,3,6],[1,4,7],[2,5,8], // horizontal
+        [0,4,8],[2,4,6]          // diagonal
     ];
 
     for (let pattern of winPatterns) {
-        if (pattern.every(idx => board[idx] === player)) {
-            return pattern; // Return the winning pattern
+        if (pattern.every(idx => boardState[idx] === player)) {
+            return returnPattern ? pattern : true; // Return pattern or boolean based on parameter
         }
     }
-    return null; // No win found
+    return returnPattern ? null : false; // No win found
 }
 
 /**
