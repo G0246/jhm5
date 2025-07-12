@@ -1,9 +1,8 @@
 /**
- * Tic Tac Toe Game
- * A simple implementation of the classic game with 1-player and 2-player modes
+ * Simple Tic Tac Toe Game
  */
 
-// DOM Elements - Get references to all the HTML elements we'll need to manipulate
+// DOM Elements
 const titleScreen = document.getElementById('titleScreen');
 const gameScreen = document.getElementById('gameScreen');
 const boardElement = document.getElementById('gameBoard');
@@ -13,11 +12,11 @@ const backBtn = document.getElementById('backBtn');
 const onePlayerBtn = document.getElementById('onePlayerBtn');
 const twoPlayerBtn = document.getElementById('twoPlayerBtn');
 
-// Game State Variables
+// Game state variables
 let board;          // Array to track the game board state ('' for empty, 'X' or 'O' for filled)
 let currentPlayer;  // Tracks whose turn it is ('X' or 'O')
 let gameActive;     // Boolean to track if the game is still ongoing
-let mode;           // Game mode: '1p' for 1 player (vs AI), '2p' for 2 players
+let mode;           // Game mode: '1p' for 1 player (vs computer), '2p' for 2 players
 
 /**
  * Initializes the game board to starting state
@@ -49,10 +48,10 @@ function renderBoard() {
         const cellDiv = document.createElement('div');
         cellDiv.className = 'cell';
 
-        // If cell has content (X or O), show it
+        // Show cell if it has content (X or O)
         if (cell) {
             cellDiv.textContent = cell;
-            cellDiv.setAttribute('data-player', cell); // For CSS styling
+            cellDiv.setAttribute('data-player', cell);
         }
 
         // Add click handler to each cell
@@ -67,6 +66,7 @@ function renderBoard() {
  * Handles when a player clicks on a cell
  * @param {number} idx - The index of the cell that was clicked (0-8)
  */
+
 function handleCellClick(idx) {
     // Ignore clicks if game is over or cell is already filled
     if (!gameActive || board[idx]) return;
@@ -106,6 +106,7 @@ function handleCellClick(idx) {
  * @param {number} idx - The cell index (0-8)
  * @param {string} player - The player symbol ('X' or 'O')
  */
+
 function makeMove(idx, player) {
     board[idx] = player;
     renderBoard();
@@ -120,6 +121,7 @@ function makeMove(idx, player) {
  * 4. Take corners
  * 5. Take edges
  */
+
 function aiMove() {
     // Don't move if the game is already over
     if (!gameActive) return;
@@ -165,6 +167,7 @@ function aiMove() {
         gameActive = false;
         return;
     }
+
     // Check if the game is a draw
     else if (board.every(cell => cell)) {
         statusElement.textContent = "It's a draw!";
@@ -182,6 +185,7 @@ function aiMove() {
  * @param {string} player - The player symbol to check for ('X' or 'O')
  * @returns {boolean} - True if the player has won, false otherwise
  */
+
 function checkWin(player) {
     const winPatterns = [
         [0,1,2],[3,4,5],[6,7,8], // rows
@@ -197,6 +201,7 @@ function checkWin(player) {
  * @param {string} player - The player symbol to find a winning move for ('X' or 'O')
  * @returns {number|null} - The index of the winning move, or null if no winning move exists
  */
+
 function findWinningMove(player) {
     const winPatterns = [
         [0,1,2],[3,4,5],[6,7,8], // rows
@@ -219,10 +224,7 @@ function findWinningMove(player) {
 }
 
 /**
- * Switches between game screens
- */
-/**
- * Switches between game screens (title screen and gameplay)
+ * Switches between game screens (title screen and game screen)
  * @param {string} screenId - The ID of the screen to show ('titleScreen' or 'gameScreen')
  */
 function showScreen(screenId) {
