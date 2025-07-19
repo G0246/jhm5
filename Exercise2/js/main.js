@@ -1,5 +1,5 @@
-// Simple To-Do List Application
-class TodoApp {
+// Main JavaScript file
+class TodoTask {
     constructor() {
         this.tasks = [];
         this.taskIdCounter = 1;
@@ -221,5 +221,5 @@ class TodoApp {
 // Initialize the app when the page loads
 let todoApp;
 document.addEventListener('DOMContentLoaded', () => {
-    todoApp = new TodoApp();
+    todoApp = new TodoTask();
 });
