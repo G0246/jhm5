@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whack-a-Mole</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔨 Whack-a-Mole</h1>
+        
+        <div class="info-bar">
+            <div class="score">Score: <span id="score">0</span></div>
+            <div class="timer">Time: <span id="timer">30</span>s</div>
+        </div>
+        
+        <div class="controls">
+            <button id="startBtn" class="btn btn-primary">Start Game</button>
+            <button id="resetBtn" class="btn btn-secondary">Reset</button>
+        </div>
+        
+        <div class="game-area">
+            <div class="game-grid" id="gameBoard">
+                <!-- Holes will be generated here -->
+            </div>
+        </div>
+        
+        <div class="game-over-modal" id="gameOver">
+            <div class="modal-content">
+                <h2>Game Over!</h2>
+                <p class="final-score">Your Score: <span id="finalScore">0</span></p>
+                <button id="playAgainBtn" class="btn btn-success">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
