@@ -1,4 +1,4 @@
-// Simple Whack-a-Mole Game
+// Simple Whack-a-Mole Game, very gud1!1!
 let game = {
     score: 0,
     timeLeft: 30,
@@ -24,19 +24,19 @@ const playAgainBtn = document.getElementById('playAgainBtn');
 // Create game board
 function createBoard() {
     gameBoard.innerHTML = '';
-    
+
     for (let i = 0; i < 9; i++) {
         const hole = document.createElement('div');
         hole.className = 'hole';
         hole.dataset.id = i;
-        
+
         const mole = document.createElement('div');
         mole.className = 'mole';
         mole.textContent = '🐹';
-        
+
         hole.appendChild(mole);
         gameBoard.appendChild(hole);
-        
+
         // Add click event to mole
         mole.addEventListener('click', hitMole);
     }
@@ -70,61 +70,60 @@ function getDynamicSpawnDelay() {
 // Start the game
 function startGame() {
     if (game.isPlaying) return;
-    
+
     game.isPlaying = true;
     game.score = 0;
     game.timeLeft = 30;
-    
+
     startBtn.textContent = 'Playing...';
     startBtn.disabled = true;
     hideGameOver();
-    
+
     updateDisplay();
-    
+
     // Start game timer
     game.gameTimer = setInterval(() => {
         game.timeLeft--;
         updateDisplay();
-        
+
         if (game.timeLeft <= 0) {
             endGame();
         }
     }, 1000);
-    
-    // Start spawning moles
-    spawnMole();
+
+    spawnThingy();
 }
 
 // Spawn a mole in random hole
-function spawnMole() {
+function spawnThingy() {
     if (!game.isPlaying) return;
-    
+
     // Hide current mole if any
     if (game.activeMole) {
         game.activeMole.classList.remove('active');
     }
-    
+
     // Get random hole
     const holes = document.querySelectorAll('.mole');
     const randomIndex = Math.floor(Math.random() * holes.length);
     game.activeMole = holes[randomIndex];
-    
+
     // Show mole
     game.activeMole.classList.add('active');
-    
+
     // Get dynamic hide time based on current score
     const hideTime = getDynamicHideTime();
-    
+
     game.moleTimer = setTimeout(() => {
         if (game.activeMole) {
             game.activeMole.classList.remove('active');
             game.activeMole = null;
         }
-        
+
         // Spawn next mole after dynamic delay
         if (game.isPlaying) {
             const spawnDelay = getDynamicSpawnDelay();
-            setTimeout(spawnMole, spawnDelay);
+            setTimeout(spawnThingy, spawnDelay);
         }
     }, hideTime);
 }
@@ -132,31 +131,31 @@ function spawnMole() {
 // Hit the mole
 function hitMole(e) {
     if (!game.isPlaying) return;
-    
+
     const mole = e.target;
-    
+
     if (mole.classList.contains('active')) {
         // Hit!
         game.score += 10;
         mole.classList.remove('active');
         mole.classList.add('hit');
-        
-        // Remove hit effect after short delay
+
+        // Remove hit effect after delay
         setTimeout(() => {
             mole.classList.remove('hit');
         }, 200);
-        
+
         // Clear current mole timer
         if (game.moleTimer) {
             clearTimeout(game.moleTimer);
         }
-        
+
         game.activeMole = null;
         updateDisplay();
-        
+
         // Spawn new mole quickly with dynamic delay
         const spawnDelay = getDynamicSpawnDelay();
-        setTimeout(spawnMole, spawnDelay);
+        setTimeout(spawnThingy, spawnDelay);
     }
 }
 
@@ -169,7 +168,7 @@ function updateDisplay() {
 // End the game
 function endGame() {
     game.isPlaying = false;
-    
+
     // Clear timers
     if (game.gameTimer) {
         clearInterval(game.gameTimer);
@@ -177,17 +176,17 @@ function endGame() {
     if (game.moleTimer) {
         clearTimeout(game.moleTimer);
     }
-    
+
     // Hide any active mole
     if (game.activeMole) {
         game.activeMole.classList.remove('active');
         game.activeMole = null;
     }
-    
+
     // Reset button
     startBtn.textContent = 'Start Game';
     startBtn.disabled = false;
-    
+
     // Show game over screen
     finalScore.textContent = game.score;
     showGameOver();
