@@ -7,12 +7,12 @@ export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		// Get the URL path from the request
 		const url = new URL(request.url);
-		
+
 		// If requesting the root path, serve index.html
 		if (url.pathname === '/') {
 			url.pathname = '/index.html';
 		}
-		
+
 		// Try to get the asset from the static assets binding
 		try {
 			const asset = await env.ASSETS.fetch(new Request(url, request));
