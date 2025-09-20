@@ -1,0 +1,194 @@
+/* Apply border-box sizing to all elements for consistent sizing */
+* {
+    box-sizing: border-box;
+}
+
+/* Basic body styling and centering the game container */
+body {
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+    /* The following 4 lines center the container vertically and horizontally */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #333;
+}
+
+/* Main container styling - holds both screens */
+.container {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    width: 90%;
+    max-width: 400px; /* Limit maximum width for larger screens */
+}
+
+/* Heading styles */
+h1 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+h2 {
+    font-size: 1.3rem;
+    margin: 10px 0;
+    color: #444;
+}
+
+/* Screen Management - controls which screen is visible */
+.screen {
+    display: none; /* Hide screens by default */
+}
+
+.screen.active {
+    display: block; /* Show only the active screen */
+}
+
+/* Title Screen Logo */
+.logo {
+    margin: 15px auto;
+    width: 150px;
+    height: 100px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    padding: 10px;
+}
+
+/* Grid layout for the X/O logo on title screen */
+.logo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
+    grid-template-rows: repeat(3, 1fr);    /* 3 equal rows */
+    gap: 3px;
+    width: 100%;
+    height: 100%;
+}
+
+/* Style for each X/O in the logo grid */
+.logo-grid span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    background: #eee;
+}
+
+/* Different colors for X's and O's in the logo */
+.logo-grid span:nth-child(odd) {
+    color: #333; /* X's */
+}
+
+.logo-grid span:nth-child(even) {
+    color: #777; /* O's */
+}
+
+/* Game mode selection area */
+.mode-select {
+    margin: 15px 0;
+}
+
+/* Game Board - The 3x3 grid */
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 60px); /* 3 columns of 60px each */
+    grid-template-rows: repeat(3, 60px);    /* 3 rows of 60px each */
+    gap: 5px;                               /* Space between cells */
+    margin: 15px auto;
+    width: max-content;                     /* Only as wide as needed */
+}
+
+/* Individual cell in the game board */
+.cell {
+    width: 60px;
+    height: 60px;
+    background: #eee;
+    font-size: 24px;
+    font-weight: bold;
+    /* Center X and O in the cell */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;                        /* Cursor when hover */
+    border: 1px solid #ccc;
+}
+
+/* Highlight effect when hovering over a cell */
+.cell:hover {
+    background: #e0e0e0;
+}
+
+/* Different colors for X and O */
+.cell[data-player="X"] {
+    color: blue;
+}
+
+.cell[data-player="O"] {
+    color: red;
+}
+
+/* Winning cell highlighting */
+.cell.winning-cell {
+    background: #4CAF50 !important;      /* Green background for winning cells */
+    color: white !important;             /* White text for better contrast */
+    animation: pulse 0.8s ease-in-out;     /* Subtle pulse animation */
+}
+
+/* Pulse animation for winning cells */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.7);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(76, 175, 80, 0.9);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 5px rgba(76, 175, 80, 0.7);
+    }
+}
+
+/* Status message area - shows current player, winner, etc. */
+.status {
+    margin: 15px 0;
+    font-size: 16px;
+    min-height: 20px;
+    color: #333;
+}
+
+/* Container for the control buttons */
+.controls {
+    display: flex;
+    justify-content: center;                /* Center the buttons horizontally */
+    gap: 10px;                              /* Space between buttons */
+    margin-top: 15px;
+}
+
+/* All buttons styling */
+button, .btn {
+    padding: 8px 15px;
+    font-size: 14px;
+    background: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    margin: 5px;
+}
+
+/* Button hover effect */
+button:hover, .btn:hover {
+    background: #e0e0e0;                    /* Slightly darker on hover */
+}
+
+/* Primary button styling - used for mode selection */
+.btn-primary {
+    background: #e0e0e0;
+    font-weight: bold;                      /* Make text bolder for emphasis */
+}
