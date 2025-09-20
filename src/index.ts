@@ -8,12 +8,7 @@ export default {
 		// Get the URL path from the request
 		const url = new URL(request.url);
 
-		// If requesting the root path, serve index.html
-		if (url.pathname === '/') {
-			url.pathname = '/index.html';
-		}
-
-		// Try to get the asset from the static assets binding
+		// Error handling for missing ASSETS binding
 		try {
 			const asset = await env.ASSETS.fetch(new Request(url, request));
 			return asset;
